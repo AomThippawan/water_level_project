@@ -5,7 +5,7 @@ const cors = require('cors');
 const waterLevelRoutes = require('./routes/waterLevelRoutes');
 
 const app = express();
-const PORT = process.env.PORT || 3030;
+const PORT = process.env.PORT || 3035;
 const MONGO_URI = process.env.MONGO_URI;
 
 app.use(cors());
