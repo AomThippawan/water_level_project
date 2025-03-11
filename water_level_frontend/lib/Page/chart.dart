@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:water_level_frontend/Page/index.dart';
+import 'package:water_level_frontend/Page/waterlevel.dart';
 import '../provider/waterLevelProvider.dart';
 
 class ChartPage extends StatefulWidget {
@@ -25,7 +27,18 @@ class _ChartPageState extends State<ChartPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Water Level Chart"),
+        title: Row(
+          children: [
+            Icon(Icons.show_chart,
+                color: const Color.fromARGB(255, 239, 53, 53)), // ไอคอนกราฟ
+            const SizedBox(width: 8), // ช่องว่างระหว่างไอคอนและข้อความ
+            const Text(
+              "Water Level Chart",
+              style:
+                  TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+            ),
+          ],
+        ),
         backgroundColor: Colors.blueAccent,
       ),
       body: Column(
@@ -205,6 +218,48 @@ class _ChartPageState extends State<ChartPage> {
             ),
           ),
         ],
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: 2,
+        selectedItemColor: Colors.blueAccent,
+        selectedLabelStyle: const TextStyle(
+          fontWeight: FontWeight.bold, // ตัวหนาสำหรับ label ที่เลือกอยู่
+        ),
+        unselectedLabelStyle: const TextStyle(
+          fontWeight: FontWeight.bold, // ตัวหนาสำหรับ label ที่ไม่ได้เลือก
+        ),
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: 'หน้าแรก',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.water),
+            label: 'ระดับน้ำ',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.bar_chart),
+            label: 'กราฟ',
+          ),
+        ],
+        onTap: (index) {
+          if (index == 0) {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => IndexPage()),
+            );
+          } else if (index == 1) {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => WaterLevelPage()),
+            );
+          } else if (index == 2) {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => ChartPage()),
+            );
+          }
+        },
       ),
     );
   }

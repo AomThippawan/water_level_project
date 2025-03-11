@@ -52,22 +52,38 @@ class IndexPage extends StatelessWidget {
         children: [
           const SizedBox(height: 20),
           Column(
-            children: const [
-              Icon(Icons.water, size: 100, color: Colors.blueAccent),
-              SizedBox(height: 8),
-              Text(
-                'WATER LEVEL',
-                style: TextStyle(
-                  fontSize: 28,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.blueAccent,
-                  letterSpacing: 2,
+            children: [
+              const Icon(Icons.water, size: 100, color: Colors.blueAccent),
+              const SizedBox(height: 8),
+              RichText(
+                text: TextSpan(
+                  children: [
+                    TextSpan(
+                      text: 'WATER ',
+                      style: const TextStyle(
+                        fontSize: 40,
+                        fontWeight: FontWeight.bold,
+                        color: Color.fromARGB(255, 11, 44, 101),
+                        letterSpacing: 2,
+                      ),
+                    ),
+                    TextSpan(
+                      text: 'LEVEL',
+                      style: const TextStyle(
+                        fontSize: 40,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.blueAccent,
+                        letterSpacing: 2,
+                      ),
+                    ),
+                  ],
                 ),
               ),
-              Text(
-                'MONITORING AND ALERT SYSTEM',
+              const Text(
+                'MONITORING AND ALERT SYSTEM ',
                 style: TextStyle(
                   fontSize: 14,
+                  fontWeight: FontWeight.bold,
                   color: Colors.blueAccent,
                   letterSpacing: 1,
                 ),
@@ -97,12 +113,17 @@ class IndexPage extends StatelessWidget {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: const [
-                          Icon(Icons.waterfall_chart,
-                              color: Colors.white, size: 40),
+                          Icon(Icons.water,
+                              color: Colors.white,
+                              size: 40), // เปลี่ยนเป็นไอคอน water_drop
                           SizedBox(height: 10),
-                          Text('ระดับน้ำ',
-                              style:
-                                  TextStyle(color: Colors.white, fontSize: 16)),
+                          Text(
+                            'ระดับน้ำ',
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold), // ตัวอักษรหนา
+                          ),
                         ],
                       ),
                     ),
@@ -126,12 +147,18 @@ class IndexPage extends StatelessWidget {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: const [
-                          Icon(Icons.timeline, color: Colors.white, size: 40),
+                          Icon(Icons.bar_chart,
+                              color: Colors.white,
+                              size: 40), // เปลี่ยนไอคอนเป็นกราฟเส้น
                           SizedBox(height: 10),
                           Text(
                             'กราฟระดับน้ำ',
                             textAlign: TextAlign.center,
-                            style: TextStyle(color: Colors.white, fontSize: 14),
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold, // ทำตัวอักษรหนา
+                            ),
                           ),
                         ],
                       ),
@@ -144,41 +171,48 @@ class IndexPage extends StatelessWidget {
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
-        currentIndex: 0,
-        selectedItemColor: Colors.blueAccent,
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'หน้าแรก',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.water),
-            label: 'ระดับน้ำ',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.timeline),
-            label: 'กราฟ',
-          ),
-        ],
-        onTap: (index) {
-          if (index == 0) {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (context) => IndexPage()),
-            );
-          } else if (index == 1) {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (context) => WaterLevelPage()),
-            );
-          } else if (index == 2) {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (context) => ChartPage()),
-            );
-          }
-        },
-      ),
+  currentIndex: 0,
+  selectedItemColor: Colors.blueAccent,
+  selectedLabelStyle: const TextStyle(
+    fontWeight: FontWeight.bold, // ตัวหนาสำหรับ label ที่เลือกอยู่
+  ),
+  unselectedLabelStyle: const TextStyle(
+    fontWeight: FontWeight.bold, // ตัวหนาสำหรับ label ที่ไม่ได้เลือก
+  ),
+  items: const [
+    BottomNavigationBarItem(
+      icon: Icon(Icons.home),
+      label: 'หน้าแรก',
+    ),
+    BottomNavigationBarItem(
+      icon: Icon(Icons.water),
+      label: 'ระดับน้ำ',
+    ),
+    BottomNavigationBarItem(
+      icon: Icon(Icons.bar_chart),
+      label: 'กราฟ',
+    ),
+  ],
+  onTap: (index) {
+    if (index == 0) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => IndexPage()),
+      );
+    } else if (index == 1) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => WaterLevelPage()),
+      );
+    } else if (index == 2) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => ChartPage()),
+      );
+    }
+  },
+),
+
     );
   }
 }

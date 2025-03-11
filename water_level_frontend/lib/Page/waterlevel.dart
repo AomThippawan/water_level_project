@@ -21,7 +21,18 @@ class _WaterLevelPageState extends State<WaterLevelPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Water Level Data"),
+        title: Row(
+          children: [
+            Icon(Icons.water_drop,
+                color: const Color.fromARGB(255, 254, 254, 254)), // ไอคอนกราฟ
+            const SizedBox(width: 8), // ช่องว่างระหว่างไอคอนและข้อความ
+            const Text(
+              "Water Level Data ",
+              style:
+                  TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+            ),
+          ],
+        ),
         backgroundColor: Colors.blueAccent,
       ),
       body: Consumer<WaterLevelProvider>(
@@ -118,18 +129,40 @@ class _WaterLevelPageState extends State<WaterLevelPage> {
                           (selectedHour == "All" ||
                               parsedTime.hour.toString() == selectedHour)) {
                         return Card(
-                          elevation: 4,
+                          elevation: 7, // เพิ่มเงาให้กล่อง
                           shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12)),
+                            borderRadius:
+                                BorderRadius.circular(15), // กำหนดมุมโค้ง
+                          ),
+                          color: getWaterLevelColor(
+                              waterLevel.level), // ใช้สีตามระดับน้ำ
                           child: ListTile(
-                            tileColor: getWaterLevelColor(waterLevel.level),
-                            title: Text('ID: ${waterLevel.id}'),
+                            title: Text(
+                              'ID: ${waterLevel.id}',
+                              style: TextStyle(
+                                  color:
+                                      Colors.white), // เปลี่ยนสีข้อความเป็นขาว
+                            ),
                             subtitle: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text('ระดับน้ำ: ${waterLevel.level} m'),
-                                Text('ระยะห่าง: ${waterLevel.distance} m'),
-                                Text('เวลา: $formattedTimestamp'),
+                                Text(
+                                  'ระดับน้ำ: ${waterLevel.level} m',
+                                  style: TextStyle(
+                                      color: const Color.fromARGB(255, 255, 255, 255)), // เปลี่ยนสีข้อความเป็นขาว
+                                ),
+                                Text(
+                                  'ระยะห่าง: ${waterLevel.distance} m',
+                                  style: TextStyle(
+                                      color: Colors
+                                          .white), // เปลี่ยนสีข้อความเป็นขาว
+                                ),
+                                Text(
+                                  'เวลา: $formattedTimestamp',
+                                  style: TextStyle(
+                                      color: Colors
+                                          .white), // เปลี่ยนสีข้อความเป็นขาว
+                                ),
                               ],
                             ),
                           ),
@@ -146,8 +179,14 @@ class _WaterLevelPageState extends State<WaterLevelPage> {
         },
       ),
       bottomNavigationBar: BottomNavigationBar(
-        currentIndex: currentIndex,
+        currentIndex: 1,
         selectedItemColor: Colors.blueAccent,
+        selectedLabelStyle: const TextStyle(
+          fontWeight: FontWeight.bold, // ตัวหนาสำหรับ label ที่เลือกอยู่
+        ),
+        unselectedLabelStyle: const TextStyle(
+          fontWeight: FontWeight.bold, // ตัวหนาสำหรับ label ที่ไม่ได้เลือก
+        ),
         items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
@@ -158,32 +197,26 @@ class _WaterLevelPageState extends State<WaterLevelPage> {
             label: 'ระดับน้ำ',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.timeline),
+            icon: Icon(Icons.bar_chart),
             label: 'กราฟ',
           ),
         ],
         onTap: (index) {
-          if (index != currentIndex) {
-            setState(() {
-              currentIndex = index;
-            });
-
-            if (index == 0) {
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (context) => IndexPage()),
-              );
-            } else if (index == 1) {
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (context) => WaterLevelPage()),
-              );
-            } else if (index == 2) {
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (context) => ChartPage()),
-              );
-            }
+          if (index == 0) {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => IndexPage()),
+            );
+          } else if (index == 1) {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => WaterLevelPage()),
+            );
+          } else if (index == 2) {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => ChartPage()),
+            );
           }
         },
       ),
