@@ -4,7 +4,7 @@ import 'package:http/http.dart' as http;
 import '../models/waterLevelModel.dart';
 
 class WaterLevelProvider extends ChangeNotifier {
-  final String apiUrl = "http://10.0.2.2:3040/api/waterlevels"; // URL API
+  final String apiUrl = "http://10.118.191.96:3040/api/waterlevels"; // URL API
   List<WaterLevelModel> _waterLevels = [];
   bool _showAlert = false;
 

@@ -30,113 +30,131 @@ class _ChartPageState extends State<ChartPage> {
         title: Row(
           children: [
             Icon(Icons.show_chart,
-                color: const Color.fromARGB(255, 239, 53, 53)), // ไอคอนกราฟ
-            const SizedBox(width: 8), // ช่องว่างระหว่างไอคอนและข้อความ
+                color: const Color.fromARGB(255, 239, 53, 53)),
+            const SizedBox(width: 8),
             const Text(
               "Water Level Chart",
-              style:
-                  TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+              style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
             ),
           ],
         ),
         backgroundColor: Colors.blueAccent,
       ),
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                DropdownButton<String>(
-                  value: selectedMonth,
-                  onChanged: (String? newValue) {
-                    setState(() {
-                      selectedMonth = newValue!;
-                    });
-                  },
-                  items: [
-                    "All",
-                    ...List.generate(12, (index) {
-                      return DateFormat("MM").format(DateTime(2025, index + 1));
-                    })
-                  ].map<DropdownMenuItem<String>>((month) {
-                    return DropdownMenuItem<String>(
-                      value: month,
-                      child: Text(month == "All"
-                          ? "All Months"
-                          : "${month} ${getMonthName(month)}"),
-                    );
-                  }).toList(),
+      body: Consumer<WaterLevelProvider>(
+        builder: (context, provider, child) {
+          if (provider.waterLevels.isEmpty) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          if (provider.showAlert) {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              showDialog(
+                context: context,
+                builder: (context) => AlertDialog(
+                  title: Text("Alert: High Water Level"),
+                  content: Text(
+                    "The water level has reached a critical point: ${provider.waterLevels.last.level} cm!",
+                  ),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.of(context).pop(),
+                      child: Text("Close"),
+                    ),
+                  ],
                 ),
-                DropdownButton<String>(
-                  value: selectedHour,
-                  onChanged: (String? newValue) {
-                    setState(() {
-                      selectedHour = newValue!;
-                    });
-                  },
-                  items: [
-                    "All",
-                    ...List.generate(24, (index) => index.toString())
-                  ].map<DropdownMenuItem<String>>((hour) {
-                    return DropdownMenuItem<String>(
-                      value: hour,
-                      child: Text(hour == "All" ? "All Hours" : "$hour:00"),
-                    );
-                  }).toList(),
+              );
+            });
+          }
+
+          final data = provider.waterLevels;
+          List<FlSpot> greenSpots = [];
+          List<FlSpot> yellowSpots = [];
+          List<FlSpot> redSpots = [];
+          List<String> timeLabels = [];
+
+          for (int i = 0; i < data.length; i++) {
+            double waterLevel = data[i].level.toDouble();
+            String rawTime = data[i].time;
+            DateTime parsedTime;
+            try {
+              if (rawTime.contains(".")) {
+                parsedTime = DateFormat("HH.mm.ss").parse(rawTime);
+              } else {
+                parsedTime = DateFormat("HH:mm:ss").parse(rawTime);
+              }
+            } catch (e) {
+              print("Error parsing time: $rawTime, error: $e");
+              parsedTime = DateTime.now();
+            }
+
+            if ((selectedMonth == "All" ||
+                    parsedTime.month.toString().padLeft(2, '0') == selectedMonth) &&
+                (selectedHour == "All" ||
+                    parsedTime.hour.toString() == selectedHour)) {
+              FlSpot spot = FlSpot(i.toDouble(), waterLevel);
+              Color levelColor = getWaterLevelColor(waterLevel);
+              if (levelColor == Colors.green) {
+                greenSpots.add(spot);
+              } else if (levelColor == Colors.yellow) {
+                yellowSpots.add(spot);
+              } else {
+                redSpots.add(spot);
+              }
+              timeLabels.add(DateFormat("MM/dd HH:mm").format(parsedTime));
+            }
+          }
+
+          return Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    DropdownButton<String>(
+                      value: selectedMonth,
+                      onChanged: (String? newValue) {
+                        setState(() {
+                          selectedMonth = newValue!;
+                        });
+                      },
+                      items: [
+                        "All",
+                        ...List.generate(12, (index) {
+                          return DateFormat("MM")
+                              .format(DateTime(2025, index + 1));
+                        })
+                      ].map<DropdownMenuItem<String>>((month) {
+                        return DropdownMenuItem<String>(
+                          value: month,
+                          child: Text(month == "All"
+                              ? "All Months"
+                              : "$month ${getMonthName(month)}"),
+                        );
+                      }).toList(),
+                    ),
+                    DropdownButton<String>(
+                      value: selectedHour,
+                      onChanged: (String? newValue) {
+                        setState(() {
+                          selectedHour = newValue!;
+                        });
+                      },
+                      items: [
+                        "All",
+                        ...List.generate(24, (index) => index.toString())
+                      ].map<DropdownMenuItem<String>>((hour) {
+                        return DropdownMenuItem<String>(
+                          value: hour,
+                          child: Text(hour == "All" ? "All Hours" : "$hour:00"),
+                        );
+                      }).toList(),
+                    ),
+                  ],
                 ),
-              ],
-            ),
-          ),
-          Expanded(
-            child: Consumer<WaterLevelProvider>(
-              builder: (context, provider, child) {
-                final data = provider.waterLevels;
-                if (data.isEmpty) {
-                  return const Center(child: Text('No data available'));
-                }
-
-                List<FlSpot> greenSpots = [];
-                List<FlSpot> yellowSpots = [];
-                List<FlSpot> redSpots = [];
-                List<String> timeLabels = [];
-
-                for (int i = 0; i < data.length; i++) {
-                  double waterLevel = data[i].level.toDouble();
-                  String rawTime = data[i].time;
-                  DateTime parsedTime;
-                  try {
-                    if (rawTime.contains(".")) {
-                      parsedTime = DateFormat("HH.mm.ss").parse(rawTime);
-                    } else {
-                      parsedTime = DateFormat("HH:mm:ss").parse(rawTime);
-                    }
-                  } catch (e) {
-                    print("Error parsing time: $rawTime, error: $e");
-                    parsedTime = DateTime.now();
-                  }
-
-                  if ((selectedMonth == "All" ||
-                          parsedTime.month.toString().padLeft(2, '0') ==
-                              selectedMonth) &&
-                      (selectedHour == "All" ||
-                          parsedTime.hour.toString() == selectedHour)) {
-                    FlSpot spot = FlSpot(i.toDouble(), waterLevel);
-                    if (getWaterLevelColor(waterLevel) == Colors.green) {
-                      greenSpots.add(spot);
-                    } else if (getWaterLevelColor(waterLevel) ==
-                        Colors.yellow) {
-                      yellowSpots.add(spot);
-                    } else {
-                      redSpots.add(spot);
-                    }
-                    timeLabels
-                        .add(DateFormat("MM/dd HH:mm").format(parsedTime));
-                  }
-                }
-
-                return Padding(
+              ),
+              Expanded(
+                child: Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: LineChart(
                     LineChartData(
@@ -198,8 +216,7 @@ class _ChartPageState extends State<ChartPage> {
                           isStrokeCapRound: true,
                           color: Colors.yellow,
                           belowBarData: BarAreaData(
-                              show: true,
-                              color: Colors.yellow.withOpacity(0.3)),
+                              show: true, color: Colors.yellow.withOpacity(0.3)),
                         ),
                         LineChartBarData(
                           spots: redSpots,
@@ -213,20 +230,20 @@ class _ChartPageState extends State<ChartPage> {
                       ],
                     ),
                   ),
-                );
-              },
-            ),
-          ),
-        ],
+                ),
+              ),
+            ],
+          );
+        },
       ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: 2,
         selectedItemColor: Colors.blueAccent,
         selectedLabelStyle: const TextStyle(
-          fontWeight: FontWeight.bold, // ตัวหนาสำหรับ label ที่เลือกอยู่
+          fontWeight: FontWeight.bold,
         ),
         unselectedLabelStyle: const TextStyle(
-          fontWeight: FontWeight.bold, // ตัวหนาสำหรับ label ที่ไม่ได้เลือก
+          fontWeight: FontWeight.bold,
         ),
         items: const [
           BottomNavigationBarItem(

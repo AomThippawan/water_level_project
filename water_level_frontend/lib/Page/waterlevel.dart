@@ -141,7 +141,7 @@ class _WaterLevelPageState extends State<WaterLevelPage> {
                               'ID: ${waterLevel.id}',
                               style: TextStyle(
                                   color:
-                                      Colors.white), // เปลี่ยนสีข้อความเป็นขาว
+                                      const Color.fromARGB(255, 12, 12, 12)), // เปลี่ยนสีข้อความเป็นขาว
                             ),
                             subtitle: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -149,19 +149,17 @@ class _WaterLevelPageState extends State<WaterLevelPage> {
                                 Text(
                                   'ระดับน้ำ: ${waterLevel.level} m',
                                   style: TextStyle(
-                                      color: const Color.fromARGB(255, 255, 255, 255)), // เปลี่ยนสีข้อความเป็นขาว
+                                      color: const Color.fromARGB(255, 28, 36, 123)), // เปลี่ยนสีข้อความเป็นขาว
                                 ),
                                 Text(
                                   'ระยะห่าง: ${waterLevel.distance} m',
                                   style: TextStyle(
-                                      color: Colors
-                                          .white), // เปลี่ยนสีข้อความเป็นขาว
+                                      color: const Color.fromARGB(255, 7, 7, 7)), // เปลี่ยนสีข้อความเป็นขาว
                                 ),
                                 Text(
                                   'เวลา: $formattedTimestamp',
                                   style: TextStyle(
-                                      color: Colors
-                                          .white), // เปลี่ยนสีข้อความเป็นขาว
+                                      color: const Color.fromARGB(255, 9, 9, 9)), // เปลี่ยนสีข้อความเป็นขาว
                                 ),
                               ],
                             ),
@@ -259,11 +257,11 @@ class _WaterLevelPageState extends State<WaterLevelPage> {
     double percentage = (level / tankHeight) * 100;
 
     if (percentage <= 75) {
-      return Colors.green;
+      return const Color.fromARGB(161, 76, 175, 79);
     } else if (percentage <= 90) {
-      return Colors.yellow;
+      return const Color.fromARGB(211, 254, 239, 103);
     } else {
-      return Colors.red;
+      return const Color.fromARGB(167, 255, 80, 67);
     }
   }
 }
